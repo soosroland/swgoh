@@ -3,6 +3,8 @@ import xlsxwriter
 import pandas as pd
 import numpy as np
 
+file_name_base = "E:\\Roland\\swgoh\\csvs\\unit-export.csv"
+
 # Workbook() takes one, non-optional, argument
 # which is the filename that we want to create.
 workbook_p1 = xlsxwriter.Workbook('PlatoonDev_P1.xlsx')
@@ -11,6 +13,7 @@ workbook_p3 = xlsxwriter.Workbook('PlatoonDev_P3.xlsx')
 workbook_p4 = xlsxwriter.Workbook('PlatoonDev_P4.xlsx')
 workbook_p5 = xlsxwriter.Workbook('PlatoonDev_P5.xlsx')
 workbook_p6 = xlsxwriter.Workbook('PlatoonDev_P6.xlsx')
+
 workbook_collector = []
 workbook_collector.append(workbook_p1)
 workbook_collector.append(workbook_p2)
@@ -62,7 +65,7 @@ unit_current = ['TRIPLEZERO','50RT', 'AAYLASECURA','ADMIRALACKBAR','ADMIRALPIETT
 'URORRURRR','YOUNGCHEWBACCA','SMUGGLERCHEWBACCA','SMUGGLERHAN','VISASMARR','WAMPA','WATTAMBOR','WEDGEANTILLES','WICKET', 'BADBATCHWRECKER','YOUNGHAN',
 'YOUNGLANDO','ZAALBAR','ZAMWESELL']
 
-unit_req_p1 = [4,0, 0,0,1,0,0,1,
+unit_req_p1 = [4,0,0,0,1,0,0,1,
 1,1,1,0,1,0,1,0,
 0,0,6,2,0,0,0,1,5,0,1,
 0,3,6,0,2,0,0,0,0,0,1,
@@ -140,7 +143,7 @@ unit_req_p3 = [1,1,0,0,0,0,0,0,
 0,0,0,0,0,0,3,0,0,0,1,
 0,0,0]
 
-unit_req_p4 = [0,3, 1,1,0,0,0,0,
+unit_req_p4 = [0,3,1,1,0,0,0,0,
 0,0,3,2,0,1,0,0,
 1,1,1,6,0,2,1,0,6,0,0,
 0,1,0,1,0,0,0,0,0,0,0,
@@ -166,7 +169,7 @@ unit_req_p4 = [0,3, 1,1,0,0,0,0,
 0,0,0,1,0,1,0,1,1,0,0,
 0,2,0]
 
-unit_req_p5 = [0,3, 0,0,0,0,0,1,
+unit_req_p5 = [0,3,0,0,0,0,0,1,
 1,0,0,0,0,0,2,2,
 0,2,0,2,0,1,0,1,9,2,0,
 1,0,2,0,0,0,0,0,0,0,0,
@@ -218,14 +221,19 @@ unit_req_p6 = [0,0,0,0,0,1,0,0,
 0,0,1,0,0,0,2,0,0,0,0,
 1,1,1]
 
-
-file_name = "E:\\Roland\\swgoh\\csvs\\unit-export.csv"
+unit_req_collector = []
+unit_req_collector.append(unit_req_p1)
+unit_req_collector.append(unit_req_p2)
+unit_req_collector.append(unit_req_p3)
+unit_req_collector.append(unit_req_p4)
+unit_req_collector.append(unit_req_p5)
+unit_req_collector.append(unit_req_p6)
 
 # write header
 for i in range(len(worksheet_collector)):
     worksheet_collector[i].write(0, 0, "Character name")
-    worksheet_collector[i].write(0, 1, "R5 current")
-    worksheet_collector[i].write(0, 2, "P1 req")
+    worksheet_collector[i].write(0, 1, "Relic current")
+    worksheet_collector[i].write(0, 2, "Phase req")
     worksheet_collector[i].write(0, 3, "Needed number")
     worksheet_collector[i].write(0, 4, "Closest to req")
 
@@ -239,31 +247,32 @@ min_relic.append(9)
 
 for file_index in range(len(worksheet_collector)):
     row_num = 1
+    file_name = file_name_base
     for i in range(len(unit_current)):
         #18. Ben Solo 23. Boba Scion 54. Darth Malgus 119. Jabba 147. LV 153. Maul 184. Rey 190. Sana 199. SEE 204. SK
         if i != 19 and i != 24 and i != 55 and i != 120 and i != 148 and i != 154 and i != 185 and i != 191 and i != 200 and i != 205:
             # reading the csv file
             df = pd.read_csv(file_name, encoding="ISO-8859-1", on_bad_lines='skip', sep=',')
 
-            # write if we do not have enough for P1
-            if ( df[df['Relic Tier'] >= min_relic[file_index]]['Relic Tier'].count() < unit_req_p1[i] ):
+            # write if we do not have enough for Phase
+            if ( df[df['Relic Tier'] >= min_relic[file_index]]['Relic Tier'].count() < unit_req_collector[file_index][i] ):
 
                 column = 0
                 # write character name
                 worksheet_collector[file_index].write(row_num, column, str(unit_current[i]))
                 column = column + 1 
 
-                # write R5 data
+                # write Relic data
                 worksheet_collector[file_index].write(row_num, column, str(df[df['Relic Tier'] >= min_relic[file_index]]['Relic Tier'].count()))
                 column = column + 1 
 
-                # write P1 required
-                worksheet_collector[file_index].write(row_num, column, unit_req_p1[i])
+                # write Phase required
+                worksheet_collector[file_index].write(row_num, column, unit_req_collector[file_index][i])
                 column = column + 1 
 
                 # how many more is needed from that unit
-                more_needed = unit_req_p1[i] - df[df['Relic Tier'] >= min_relic[file_index]]['Relic Tier'].count()
-                # write P1 more needed
+                more_needed = unit_req_collector[file_index][i] - df[df['Relic Tier'] >= min_relic[file_index]]['Relic Tier'].count()
+                # write Phase more needed
                 worksheet_collector[file_index].write(row_num, column, more_needed)
                 column = column + 1
                 # data with lower relic characters
@@ -286,24 +295,24 @@ for file_index in range(len(worksheet_collector)):
             # reading the csv file
             df = pd.read_csv(file_name, encoding="ISO-8859-1", on_bad_lines='skip', sep=',')
 
-            # write if we do not have enough for P1
-            if ( df[df['Gear Tier'] >= min_relic[file_index]]['Gear Tier'].count() < unit_req_p1[i] ):
+            # write if we do not have enough for Phase
+            if ( df[df['Gear Tier'] >= min_relic[file_index]]['Gear Tier'].count() < unit_req_collector[file_index][i] ):
 
                 column = 0
                 # write character name
                 worksheet_collector[file_index].write(row_num, column, str(unit_current[i]))
                 column = column + 1 
 
-                # write R5 data
+                # write Relic data
                 worksheet_collector[file_index].write(row_num, column, str(df[df['Gear Tier'] >= min_relic[file_index]]['Gear Tier'].count()))
                 column = column + 1 
 
-                # write P1 required
-                worksheet_collector[file_index].write(row_num, column, unit_req_p1[i])
+                # write Phase required
+                worksheet_collector[file_index].write(row_num, column, unit_req_collector[file_index][i])
                 column = column + 1 
 
                 # how many more is needed from that unit
-                more_needed = unit_req_p1[i] - df[df['Gear Tier'] >= min_relic[file_index]]['Gear Tier'].count()
+                more_needed = unit_req_collector[file_index][i] - df[df['Gear Tier'] >= min_relic[file_index]]['Gear Tier'].count()
                 # write P1 more needed
                 worksheet_collector[file_index].write(row_num, column, more_needed)
                 column = column + 1
@@ -323,7 +332,8 @@ for file_index in range(len(worksheet_collector)):
                 column = column + 1
                 row_num = row_num + 1
 
-        file_name = "E:\\Roland\\swgoh\\csvs\\unit-export(" + str(i+1) + ").csv"
+        file_name = file_name_base.split(".csv")[0] + "(" + str(i+1) + ").csv"
+
 # close the files
 for i in range(len(workbook_collector)):
     workbook_collector[i].close()
