@@ -329,15 +329,16 @@ for i in range(len(unit_current)):
             else:
                 worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R8 needed: " + str(unit_req_p4[i])
                 + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
+        # not yet working, lists even those which we have
         elif PlanForPhase == 3:
             if unit_req_p1[i] == 0 and unit_req_p2[i] == 0 and unit_req_p3[i] == 0:
                 worksheet.write(i+1, column, "")
             elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]))
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]))
             elif unit_req_p2[i] >= unit_req_p1[i]:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]))
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]))
             else:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]) + " R5: " + str(unit_req_p1[i]))
 
         # print(str(unit_current[i]) + 
         # " R5: " + str(df[df['Relic Tier'] >= 5]['Relic Tier'].count()) + 
@@ -454,15 +455,16 @@ for i in range(len(unit_current)):
             else:
                 worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R8 needed: " + str(unit_req_p4[i])
                 + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
+        # not yet working, lists even those which we have
         elif PlanForPhase == 3:
             if unit_req_p1[i] == 0 and unit_req_p2[i] == 0 and unit_req_p3[i] == 0:
                 worksheet.write(i+1, column, "")
             elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]))
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]))
             elif unit_req_p2[i] >= unit_req_p1[i]:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]))
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]))
             else:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]) + " R5: " + str(unit_req_p1[i]))
 
     file_name = "E:\\Roland\\swgoh\\csvs\\unit-export(" + str(i+1) + ").csv"
 # close the file
