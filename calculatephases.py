@@ -5,6 +5,7 @@ import pandas as pd
 # Workbook() takes one, non-optional, argument
 # which is the filename that we want to create.
 workbook = xlsxwriter.Workbook('RiseOfEmpirePlatoon.xlsx')
+PlanForPhase = 3
  
 # The workbook object is then used to add new
 # worksheet via the add_worksheet() method.
@@ -36,7 +37,7 @@ unit_current = ['TRIPLEZERO','50RT', 'AAYLASECURA','ADMIRALACKBAR','ADMIRALPIETT
 'URORRURRR','YOUNGCHEWBACCA','SMUGGLERCHEWBACCA','SMUGGLERHAN','VISASMARR','WAMPA','WATTAMBOR','WEDGEANTILLES','WICKET', 'BADBATCHWRECKER','YOUNGHAN',
 'YOUNGLANDO','ZAALBAR','ZAMWESELL']
 
-unit_req_p1 = [4,0, 0,0,1,0,0,1,
+unit_req_p1 = [4,0,0,0,1,0,0,1,
 1,1,1,0,1,0,1,0,
 0,0,6,2,0,0,0,1,5,0,1,
 0,3,6,0,2,0,0,0,0,0,1,
@@ -114,7 +115,7 @@ unit_req_p3 = [1,1,0,0,0,0,0,0,
 0,0,0,0,0,0,3,0,0,0,1,
 0,0,0]
 
-unit_req_p4 = [0,3, 1,1,0,0,0,0,
+unit_req_p4 = [0,3,1,1,0,0,0,0,
 0,0,3,2,0,1,0,0,
 1,1,1,6,0,2,1,0,6,0,0,
 0,1,0,1,0,0,0,0,0,0,0,
@@ -140,7 +141,7 @@ unit_req_p4 = [0,3, 1,1,0,0,0,0,
 0,0,0,1,0,1,0,1,1,0,0,
 0,2,0]
 
-unit_req_p5 = [0,3, 0,0,0,0,0,1,
+unit_req_p5 = [0,3,0,0,0,0,0,1,
 1,0,0,0,0,0,2,2,
 0,2,0,2,0,1,0,1,9,2,0,
 1,0,2,0,0,0,0,0,0,0,0,
@@ -214,7 +215,6 @@ worksheet.write(0,14, "P5 req")
 worksheet.write(0,15, "P5 status")
 worksheet.write(0,16, "P6 req")
 worksheet.write(0,17, "P6 status")
-
 
 for i in range(len(unit_current)):
     #18. Ben Solo 23. Boba Scion 54. Darth Malgus 119. Jabba 147. LV 153. Maul 184. Rey 190. Sana 199. SEE 204. SK
@@ -313,6 +313,31 @@ for i in range(len(unit_current)):
             worksheet.write(i+1, column, "!!!!!!")
         column = column + 1 
         
+
+        # Phase 6 highest
+        if PlanForPhase == 6:
+            if unit_req_p6[i] >= max(unit_req_p5[i],unit_req_p4[i],unit_req_p3[i],unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R5..9 needed: " + str(unit_req_p6[i]))
+            elif unit_req_p5[i] >= max(unit_req_p6[i],unit_req_p4[i],unit_req_p3[i],unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R5..9 needed: " + str(unit_req_p5[i]))
+            elif unit_req_p4[i] >= max(unit_req_p3[i],unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R8 needed: " + str(unit_req_p4[i]))
+            elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R7 needed: " + str(unit_req_p3[i]))
+            elif unit_req_p2[i] >= unit_req_p1[i]:
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R6 needed: " + str(unit_req_p2[i]))
+            else:
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R8 needed: " + str(unit_req_p4[i])
+                + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
+        elif PlanForPhase == 3:
+            if unit_req_p1[i] == 0 and unit_req_p2[i] == 0 and unit_req_p3[i] == 0:
+                worksheet.write(i+1, column, "")
+            elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]))
+            elif unit_req_p2[i] >= unit_req_p1[i]:
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]))
+            else:
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
 
         # print(str(unit_current[i]) + 
         # " R5: " + str(df[df['Relic Tier'] >= 5]['Relic Tier'].count()) + 
@@ -413,6 +438,31 @@ for i in range(len(unit_current)):
         else:
             worksheet.write(i+1, column, "!!!!!!")
         column = column + 1 
+
+        # Phase 6 highest
+        if PlanForPhase == 6:
+            if unit_req_p6[i] >= max(unit_req_p5[i],unit_req_p4[i],unit_req_p3[i],unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R5..9 needed: " + str(unit_req_p6[i]))
+            elif unit_req_p5[i] >= max(unit_req_p6[i],unit_req_p4[i],unit_req_p3[i],unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R5..9 needed: " + str(unit_req_p5[i]))
+            elif unit_req_p4[i] >= max(unit_req_p3[i],unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R8 needed: " + str(unit_req_p4[i]))
+            elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R7 needed: " + str(unit_req_p3[i]))
+            elif unit_req_p2[i] >= unit_req_p1[i]:
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R6 needed: " + str(unit_req_p2[i]))
+            else:
+                worksheet.write(i+1, column, "R9 needed: " + str(max(unit_req_p6[i],unit_req_p5[i])) + " R8 needed: " + str(unit_req_p4[i])
+                + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
+        elif PlanForPhase == 3:
+            if unit_req_p1[i] == 0 and unit_req_p2[i] == 0 and unit_req_p3[i] == 0:
+                worksheet.write(i+1, column, "")
+            elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]))
+            elif unit_req_p2[i] >= unit_req_p1[i]:
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]))
+            else:
+                worksheet.write(i+1, column, str(unit_current[i]) + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
 
     file_name = "E:\\Roland\\swgoh\\csvs\\unit-export(" + str(i+1) + ").csv"
 # close the file
