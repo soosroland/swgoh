@@ -215,6 +215,8 @@ worksheet.write(0,14, "P5 req")
 worksheet.write(0,15, "P5 status")
 worksheet.write(0,16, "P6 req")
 worksheet.write(0,17, "P6 status")
+worksheet.write(0,18, "P3 needed")
+worksheet.write(0,19, "Closest")
 
 for i in range(len(unit_current)):
     #18. Ben Solo 23. Boba Scion 54. Darth Malgus 119. Jabba 147. LV 153. Maul 184. Rey 190. Sana 199. SEE 204. SK
@@ -331,14 +333,49 @@ for i in range(len(unit_current)):
                 + " R7 needed: " + str(unit_req_p3[i]) + " R6 needed: " + str(unit_req_p2[i]) + " R5 needed: " + str(unit_req_p1[i]))
         # not yet working, lists even those which we have
         elif PlanForPhase == 3:
+            # if unit_req_p1[i] == 0 and unit_req_p2[i] == 0 and unit_req_p3[i] == 0:
+            #     worksheet.write(i+1, column, "")
+            # elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
+            #     worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]))
+            # elif unit_req_p2[i] >= unit_req_p1[i]:
+            #     worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]))
+            # else:
+            #     worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]) + " R5: " + str(unit_req_p1[i]))
             if unit_req_p1[i] == 0 and unit_req_p2[i] == 0 and unit_req_p3[i] == 0:
-                worksheet.write(i+1, column, "")
-            elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]))
-            elif unit_req_p2[i] >= unit_req_p1[i]:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]))
+                 worksheet.write(i+1, column, "")
             else:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]) + " R5: " + str(unit_req_p1[i]))
+                P3_needed_message = ""
+                R7_needed_still = unit_req_p3[i] - df[df['Relic Tier'] >= 7]['Relic Tier'].count()
+                if R7_needed_still > 0:
+                    P3_needed_message += "R7:" + str(R7_needed_still) + " "
+                else:
+                    R7_needed_still = 0
+                R6_needed_still = unit_req_p2[i] - df[df['Relic Tier'] >= 6]['Relic Tier'].count() - R7_needed_still
+                if R6_needed_still > 0:
+                    P3_needed_message += "R6:" + str(R6_needed_still) + " "
+                else:
+                    R6_needed_still = 0
+                R5_needed_still = unit_req_p1[i] - df[df['Relic Tier'] >= 5]['Relic Tier'].count() - R7_needed_still - R6_needed_still
+                if R5_needed_still > 0:
+                    P3_needed_message += "R5:" + str(R5_needed_still) + " "
+                worksheet.write(i+1, column, P3_needed_message)
+                column = column + 1
+
+                if P3_needed_message != "":
+                    # data with lower relic characters
+                    data_withlowerrelic = df[df['Relic Tier'] < 7]
+                    # data with lower relic characters sorted based on relic level
+                    data_withlowerrelic_sorted = data_withlowerrelic.sort_values(by=['Relic Tier'], ascending=False)
+                    # getting player names with relic levels
+                    players_withlowerrelic = data_withlowerrelic_sorted[['ï»¿Player Name', 'Relic Tier']]
+                    # only leave first X players (where is is needed character number + 2)
+                    players_withlowerrelic = players_withlowerrelic.iloc[0:max(unit_req_p1[i],unit_req_p2[i],unit_req_p3[i])+2]
+                    # print out player names to output
+                    message = ""
+                    for idx in range(len(players_withlowerrelic.index)):
+                        message += str(players_withlowerrelic['ï»¿Player Name'].iloc[idx]) + ": R" + str(int(players_withlowerrelic['Relic Tier'].iloc[idx])) + ", "
+                    worksheet.write(i+1, column, message)
+                    column = column + 1
 
         # print(str(unit_current[i]) + 
         # " R5: " + str(df[df['Relic Tier'] >= 5]['Relic Tier'].count()) + 
@@ -458,13 +495,40 @@ for i in range(len(unit_current)):
         # not yet working, lists even those which we have
         elif PlanForPhase == 3:
             if unit_req_p1[i] == 0 and unit_req_p2[i] == 0 and unit_req_p3[i] == 0:
-                worksheet.write(i+1, column, "")
-            elif unit_req_p3[i] >= max(unit_req_p2[i],unit_req_p1[i]):
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]))
-            elif unit_req_p2[i] >= unit_req_p1[i]:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]))
+                 worksheet.write(i+1, column, "")
             else:
-                worksheet.write(i+1, column, str(unit_current[i]) + " R7: " + str(unit_req_p3[i]) + " R6: " + str(unit_req_p2[i]) + " R5: " + str(unit_req_p1[i]))
+                P3_needed_message = ""
+                R7_needed_still = unit_req_p3[i] - df[df['Gear Tier'] >= 7]['Gear Tier'].count()
+                if R7_needed_still > 0:
+                    P3_needed_message += "R7:" + str(R7_needed_still) + " "
+                else:
+                    R7_needed_still = 0
+                R6_needed_still = unit_req_p2[i] - df[df['Gear Tier'] >= 6]['Gear Tier'].count() - R7_needed_still
+                if R6_needed_still > 0:
+                    P3_needed_message += "R6:" + str(R6_needed_still) + " "
+                else:
+                    R6_needed_still = 0
+                R5_needed_still = unit_req_p1[i] - df[df['Gear Tier'] >= 5]['Gear Tier'].count() - R7_needed_still - R6_needed_still
+                if R5_needed_still > 0:
+                    P3_needed_message += "R5:" + str(R5_needed_still) + " "
+                worksheet.write(i+1, column, P3_needed_message)
+                column = column + 1
+
+                if P3_needed_message != "":
+                    # data with lower relic characters
+                    data_withlowerrelic = df[df['Relic Tier'] < 7]
+                    # data with lower relic characters sorted based on relic level
+                    data_withlowerrelic_sorted = data_withlowerrelic.sort_values(by=['Gear Tier'], ascending=False)
+                    # getting player names with relic levels
+                    players_withlowerrelic = data_withlowerrelic_sorted[['ï»¿Player Name', 'Gear Tier']]
+                    # only leave first X players (where is is needed character number + 2)
+                    players_withlowerrelic = players_withlowerrelic.iloc[0:max(unit_req_p1[i],unit_req_p2[i],unit_req_p3[i])+2]
+                    # print out player names to output
+                    message = ""
+                    for idx in range(len(players_withlowerrelic.index)):
+                        message += str(players_withlowerrelic['ï»¿Player Name'].iloc[idx]) + ": R" + str(int(players_withlowerrelic['Gear Tier'].iloc[idx])) + ", "
+                    worksheet.write(i+1, column, message)
+                    column = column + 1
 
     file_name = "E:\\Roland\\swgoh\\csvs\\unit-export(" + str(i+1) + ").csv"
 # close the file
