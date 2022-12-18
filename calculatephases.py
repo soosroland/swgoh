@@ -516,7 +516,7 @@ for i in range(len(unit_current)):
 
                 if P3_needed_message != "":
                     # data with lower relic characters
-                    data_withlowerrelic = df[df['Relic Tier'] < 7]
+                    data_withlowerrelic = df[df['Gear Tier'] < 7]
                     # data with lower relic characters sorted based on relic level
                     data_withlowerrelic_sorted = data_withlowerrelic.sort_values(by=['Gear Tier'], ascending=False)
                     # getting player names with relic levels
@@ -526,7 +526,7 @@ for i in range(len(unit_current)):
                     # print out player names to output
                     message = ""
                     for idx in range(len(players_withlowerrelic.index)):
-                        message += str(players_withlowerrelic['ï»¿Player Name'].iloc[idx]) + ": R" + str(int(players_withlowerrelic['Gear Tier'].iloc[idx])) + ", "
+                        message += str(players_withlowerrelic.index.values[idx]) + ": R" + str(int(players_withlowerrelic['Gear Tier'].iloc[idx])) + ", "
                     worksheet.write(i+1, column, message)
                     column = column + 1
 
